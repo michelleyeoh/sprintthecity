@@ -24,6 +24,12 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
+      
+      - name: Install Prisma CLI
+        run: npm install --global prisma@latest
+      
+      - name: Sync Prisma Schema
+        run: npx prisma db push
 
       - name: Sync Environment Variables
         run: |

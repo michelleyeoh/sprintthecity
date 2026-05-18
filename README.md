@@ -9,3 +9,7 @@ View my project details: https://docs.google.com/document/d/1ZYs8x09QYL8wVz7NBaC
 ## 📊 Project Status
 
 Setting up home page ui
+
+## Setting up the Database
+- Sync Prisma Schema: `npx prisma db push`
+- Seed Database: `npx prisma db seed`
