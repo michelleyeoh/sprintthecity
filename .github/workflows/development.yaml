@@ -25,11 +25,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build Next.js app
-        run: npm run build
+      - name: Generate Prisma Client
+        env:
+          DATABASE_URL: "mongodb://localhost:27017/dummy"
+        run: npx prisma generate
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - name: Build Next.js app
+        env:
+          DATABASE_URL: "mongodb://localhost:27017/dummy"
+        run: npm run build
 
       - name: Success
         run: echo "🚧 Development Check Successful 🚧 "
