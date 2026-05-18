@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
 import { prisma } from "@/app/_lib/prisma";
 
 export async function getFirstUserId(): Promise<string> {
   const user = await prisma.user.findUnique({
-    where: { email: 'michelle@example.com' },
+    where: { email: "michelle@example.com" },
     select: { id: true },
   });
 

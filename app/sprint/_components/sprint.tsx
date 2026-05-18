@@ -22,7 +22,9 @@ export default async function SprintBoard() {
         description: card.description,
         location: card.location,
         notes: card.notes || "",
-        dateToComplete: card.dateToComplete ? card.dateToComplete.toISOString() : undefined,
+        dateToComplete: card.dateToComplete
+          ? card.dateToComplete.toISOString()
+          : undefined,
       })),
     })),
   };

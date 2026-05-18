@@ -3,15 +3,15 @@ import { PrismaClient } from "../generated/prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seeding...');
+  console.log("🌱 Starting database seeding...");
 
   // 1. Find or create a test user to attach the board to
   const user = await prisma.user.upsert({
-    where: { email: 'michelle@example.com' },
+    where: { email: "michelle@example.com" },
     update: {},
     create: {
-      email: 'michelle@example.com',
-      name: 'Michelle',
+      email: "michelle@example.com",
+      name: "Michelle",
     },
   });
 
@@ -20,7 +20,7 @@ async function main() {
   // 2. Create a default sprint board for this user
   const board = await prisma.board.create({
     data: {
-      title: 'Sprint the City Board',
+      title: "Sprint the City Board",
       userId: user.id,
     },
   });
@@ -30,26 +30,22 @@ async function main() {
   // 3. Define the columns alongside their default cards
   const columnsWithCards = [
     {
-      title: 'Just Discovered',
+      title: "Just Discovered",
       order: 0,
       cards: [
-        { description: 'Card 0', location: 'San Francisco', order: 0 },
-        { description: 'Card 1', location: 'Seattle', order: 1 },
+        { description: "Card 0", location: "San Francisco", order: 0 },
+        { description: "Card 1", location: "Seattle", order: 1 },
       ],
     },
     {
-      title: 'In Progress',
+      title: "In Progress",
       order: 1,
-      cards: [
-        { description: 'Card 2', location: 'New York City', order: 0 },
-      ],
+      cards: [{ description: "Card 2", location: "New York City", order: 0 }],
     },
     {
-      title: 'Explored',
+      title: "Explored",
       order: 2,
-      cards: [
-        { description: 'Card 3', location: 'Davis', order: 0 },
-      ],
+      cards: [{ description: "Card 3", location: "Davis", order: 0 }],
     },
   ];
 
@@ -62,7 +58,9 @@ async function main() {
         boardId: board.id,
       },
     });
-    console.log(`  🧱 Column added: "${createdColumn.title}" (Order: ${createdColumn.order})`);
+    console.log(
+      `  🧱 Column added: "${createdColumn.title}" (Order: ${createdColumn.order})`,
+    );
 
     // Add the cards for this specific column
     for (const card of col.cards) {
@@ -75,11 +73,13 @@ async function main() {
           notes: `Sample note for ${card.description}`,
         },
       });
-      console.log(`🃏 Card created: "${createdCard.description}" at ${createdCard.location}`);
+      console.log(
+        `🃏 Card created: "${createdCard.description}" at ${createdCard.location}`,
+      );
     }
   }
 
-  console.log('✅ Seeding complete!');
+  console.log("✅ Seeding complete!");
 }
 
 main()

@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { prisma } from "@/app/_lib/prisma";
 
@@ -7,10 +7,10 @@ export async function getSprintBoard(userId: string) {
     where: { userId: userId },
     include: {
       columns: {
-        orderBy: { order: 'asc' },
+        orderBy: { order: "asc" },
         include: {
           cards: {
-            orderBy: { order: 'asc' },
+            orderBy: { order: "asc" },
           },
         },
       },
