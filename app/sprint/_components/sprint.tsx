@@ -2,16 +2,34 @@
 
 import { TBoard } from "./data";
 import { Board } from "./board";
-import mockData from "../../_data/mock-board.json";
+import { getSprintBoard } from "@/app/_actions/Board/getBoard";
+import { getFirstUserId } from "@/app/_actions/User/getUser";
 
-function getData(): TBoard {
-  return mockData as TBoard;
-}
+export default async function SprintBoard() {
+  const userId = await getFirstUserId();
+  const dbBoard = await getSprintBoard(userId);
 
-export default function SprintBoard() {
+  if (!dbBoard) {
+    throw new Error("No sprint board found in the database.");
+  }
+
+  const formattedBoard: TBoard = {
+    columns: dbBoard.columns.map((col) => ({
+      id: col.id,
+      title: col.title,
+      cards: col.cards.map((card) => ({
+        id: card.id,
+        description: card.description,
+        location: card.location,
+        notes: card.notes || "",
+        dateToComplete: card.dateToComplete ? card.dateToComplete.toISOString() : undefined,
+      })),
+    })),
+  };
+
   return (
     <div className="h-full md:flex md:flex-row md:justify-center">
-      <Board initial={getData()} />
+      <Board initial={formattedBoard} />
     </div>
   );
 }
