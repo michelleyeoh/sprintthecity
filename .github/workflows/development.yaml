@@ -27,16 +27,13 @@ jobs:
 
       - name: Generate Prisma Client
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: "mongodb://localhost:27017/dummy"
         run: npx prisma generate
 
       - name: Build Next.js app
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: "mongodb://localhost:27017/dummy"
         run: npm run build
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
 
       - name: Success
         run: echo "🚧 Development Check Successful 🚧 "

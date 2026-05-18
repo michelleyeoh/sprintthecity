@@ -22,14 +22,16 @@ jobs:
           node-version: "22"
           cache: "npm"
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
       - name: Install Prisma CLI
         run: npm install --global prisma@latest
 
-      - name: Sync Prisma Schema
-        run: npx prisma db push
+      - name: Generate Prisma Client
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma generate
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
 
       - name: Sync Environment Variables
         run: |
