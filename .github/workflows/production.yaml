@@ -22,8 +22,8 @@ jobs:
           node-version: "22"
           cache: "npm"
 
-      - name: Install Prisma CLI
-        run: npm install --global prisma@latest
+      - name: Install dependencies
+        run: npm install
 
       - name: Generate Prisma Client
         env:
