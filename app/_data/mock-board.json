@@ -1,0 +1,22 @@
+{
+  "columns": [
+    {
+      "id": "column:a",
+      "title": "Just Discovered",
+      "cards": [
+        { "id": "card:0", "description": "Card 0" },
+        { "id": "card:1", "description": "Card 1" }
+      ]
+    },
+    {
+      "id": "column:b",
+      "title": "In Progress",
+      "cards": [{ "id": "card:2", "description": "Card 2" }]
+    },
+    {
+      "id": "column:c",
+      "title": "Explored",
+      "cards": [{ "id": "card:3", "description": "Card 3" }]
+    }
+  ]
+}
