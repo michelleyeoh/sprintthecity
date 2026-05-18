@@ -67,7 +67,7 @@ const outerStyles: { [Key in TCardState["type"]]?: string } = {
 export function CardShadow({ dragging }: { dragging: DOMRect }) {
   return (
     <div
-      className="flex-shrink-0 rounded bg-slate-900"
+      className="flex-shrink-0 rounded bg-[#DDDDDD]"
       style={{ height: dragging.height }}
     />
   );
@@ -94,7 +94,7 @@ export function CardDisplay({
         <CardShadow dragging={state.dragging} />
       ) : null}
       <div
-        className={`rounded bg-slate-700 p-2 text-slate-300 ${innerStyles[state.type]}`}
+        className={`rounded bg-[#FFFFFF] p-2 text-[#292A2E] ${innerStyles[state.type]}`}
         ref={innerRef}
         style={
           state.type === "preview"

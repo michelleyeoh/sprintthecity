@@ -243,7 +243,7 @@ export function Column({ column }: { column: TColumn }) {
       ref={outerFullHeightRef}
     >
       <div
-        className={`flex max-h-full flex-col rounded-lg bg-slate-800 text-neutral-50 ${stateStyles[state.type]}`}
+        className={`flex max-h-full flex-col rounded-lg bg-[#F8F8F8] text-[#292A2E] ${stateStyles[state.type]}`}
         ref={innerRef}
         {...{ [blockBoardPanningAttr]: true }}
       >
@@ -258,7 +258,7 @@ export function Column({ column }: { column: TColumn }) {
             <div className="pl-2 font-bold leading-4">{column.title}</div>
             <button
               type="button"
-              className="rounded p-2 hover:bg-slate-700 active:bg-slate-600"
+              className="rounded p-2 hover:bg-[#DDDDDD] active:bg-[#DADADA]"
               aria-label="More actions"
             >
               <Ellipsis size={16} />
@@ -278,7 +278,7 @@ export function Column({ column }: { column: TColumn }) {
           <div className="flex flex-row gap-2 p-3">
             <button
               type="button"
-              className="flex flex-grow flex-row gap-1 rounded p-2 hover:bg-slate-700 active:bg-slate-600"
+              className="flex flex-grow flex-row gap-1 rounded p-2 hover:bg-[#DDDDDD] active:bg-[#DADADA]"
             >
               <Plus size={16} />
               <div className="leading-4">Add a card</div>
