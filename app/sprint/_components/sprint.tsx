@@ -8,7 +8,7 @@ function getData(): TBoard {
   return mockData as TBoard;
 }
 
-export default function Page() {
+export default function SprintBoard() {
   return (
     <div className="h-full md:flex md:flex-row md:justify-center">
       <Board initial={getData()} />
