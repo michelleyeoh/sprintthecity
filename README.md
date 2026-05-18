@@ -1,4 +1,5 @@
 # Sprint the City
+
 Plan, visualize, and roam your next destination ᯓ ✈︎
 
 ## 🎨 Design Document
