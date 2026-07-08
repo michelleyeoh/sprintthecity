@@ -2,19 +2,24 @@
 "use client";
 
 import {
-  draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Ellipsis, Plus } from "lucide-react";
-import { memo, useContext, useEffect, useRef, useState } from "react";
+import {
+  FormEvent,
+  memo,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import invariant from "tiny-invariant";
+import { useRouter } from "next/navigation";
 
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { Card, CardShadow } from "./card";
 import {
   getColumnData,
@@ -27,9 +32,9 @@ import {
   TColumn,
 } from "./data";
 import { blockBoardPanningAttr } from "./data-attributes";
-import { isSafari } from "./is-safari";
 import { isShallowEqual } from "./is-shallow-equal";
 import { SettingsContext } from "./settings-context";
+import { createCard } from "@/app/_actions/Card/createCard";
 
 type TColumnState =
   | {
@@ -48,7 +53,7 @@ type TColumnState =
     };
 
 const stateStyles: { [Key in TColumnState["type"]]: string } = {
-  idle: "cursor-grab",
+  idle: "cursor-default",
   "is-card-over": "outline outline-2 outline-neutral-50",
   "is-dragging": "opacity-40",
   "is-column-over": "bg-slate-900",
@@ -72,8 +77,45 @@ export function Column({ column }: { column: TColumn }) {
   const outerFullHeightRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
   const { settings } = useContext(SettingsContext);
   const [state, setState] = useState<TColumnState>(idle);
+  const [isAddingCard, setIsAddingCard] = useState(false);
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleAddCard(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+
+    const trimmedDescription = description.trim();
+    const trimmedLocation = location.trim();
+
+    if (!trimmedDescription || !trimmedLocation) {
+      setError("Description and location are required.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await createCard({
+        description: trimmedDescription,
+        location: trimmedLocation,
+        columnId: column.id,
+      });
+      setDescription("");
+      setLocation("");
+      setIsAddingCard(false);
+      router.refresh();
+    } catch {
+      setError("Could not create the card. Try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   useEffect(() => {
     const outer = outerFullHeightRef.current;
@@ -114,43 +156,6 @@ export function Column({ column }: { column: TColumn }) {
     }
 
     return combine(
-      draggable({
-        element: header,
-        getInitialData: () => data,
-        onGenerateDragPreview({ source, location, nativeSetDragImage }) {
-          const data = source.data;
-          invariant(isColumnData(data));
-          setCustomNativeDragPreview({
-            nativeSetDragImage,
-            getOffset: preserveOffsetOnSource({
-              element: header,
-              input: location.current.input,
-            }),
-            render({ container }) {
-              // Simple drag preview generation: just cloning the current element.
-              // Not using react for this.
-              const rect = inner.getBoundingClientRect();
-              const preview = inner.cloneNode(true);
-              invariant(preview instanceof HTMLElement);
-              preview.style.width = `${rect.width}px`;
-              preview.style.height = `${rect.height}px`;
-
-              // rotation of native drag previews does not work in safari
-              if (!isSafari()) {
-                preview.style.transform = "rotate(4deg)";
-              }
-
-              container.appendChild(preview);
-            },
-          });
-        },
-        onDragStart() {
-          setState({ type: "is-dragging" });
-        },
-        onDrop() {
-          setState(idle);
-        },
-      }),
       dropTargetForElements({
         element: outer,
         getData: () => data,
@@ -276,13 +281,54 @@ export function Column({ column }: { column: TColumn }) {
             ) : null}
           </div>
           <div className="flex flex-row gap-2 p-3">
-            <button
-              type="button"
-              className="flex flex-grow flex-row gap-1 rounded p-2 hover:bg-[#DDDDDD] active:bg-[#DADADA]"
-            >
-              <Plus size={16} />
-              <div className="leading-4">Add a card</div>
-            </button>
+            {isAddingCard ? (
+              <form className="flex w-full flex-col gap-2" onSubmit={handleAddCard}>
+                <input
+                  className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  placeholder="Card description"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  disabled={isSubmitting}
+                />
+                <input
+                  className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  placeholder="Location"
+                  value={location}
+                  onChange={(event) => setLocation(event.target.value)}
+                  disabled={isSubmitting}
+                />
+                {error ? <div className="text-xs text-red-600">{error}</div> : null}
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="flex flex-1 items-center justify-center rounded bg-[#5b0f00] px-3 py-2 text-sm text-white hover:bg-[#7a1a00] disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Adding..." : "Add card"}
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded px-3 py-2 text-sm hover:bg-[#DDDDDD]"
+                    onClick={() => {
+                      setIsAddingCard(false);
+                      setError(null);
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button
+                type="button"
+                className="flex flex-grow flex-row gap-1 rounded p-2 hover:bg-[#DDDDDD] active:bg-[#DADADA]"
+                onClick={() => setIsAddingCard(true)}
+              >
+                <Plus size={16} />
+                <div className="leading-4">Add a card</div>
+              </button>
+            )}
           </div>
         </div>
       </div>

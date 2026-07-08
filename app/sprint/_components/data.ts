@@ -3,6 +3,7 @@
 export type TCard = {
   id: string;
   description: string;
+  location: string;
 };
 
 export type TColumn = {

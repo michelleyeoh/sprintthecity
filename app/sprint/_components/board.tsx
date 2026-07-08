@@ -9,6 +9,7 @@ import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/ad
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
 import { useContext, useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
+import { updateCardOrders } from "@/app/_actions/Card/updateCardOrders";
 import { Column } from "./column";
 import {
   isCardData,
@@ -24,6 +25,15 @@ import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-an
 import { bindAll } from "bind-event-listener";
 import { blockBoardPanningAttr } from "./data-attributes";
 import { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+
+async function persistCardOrders(columns: TColumn[]) {
+  await updateCardOrders(
+    columns.map((column) => ({
+      columnId: column.id,
+      cardIds: column.cards.map((card) => card.id),
+    })),
+  );
+}
 
 export function Board({ initial }: { initial: TBoard }) {
   const [data, setData] = useState(initial);
@@ -99,6 +109,7 @@ export function Board({ initial }: { initial: TBoard }) {
               const columns = Array.from(data.columns);
               columns[homeColumnIndex] = updated;
               setData({ ...data, columns });
+              void persistCardOrders([updated]);
               return;
             }
 
@@ -135,6 +146,10 @@ export function Board({ initial }: { initial: TBoard }) {
               cards: destinationCards,
             };
             setData({ ...data, columns });
+            void persistCardOrders([
+              { ...home, cards: homeCards },
+              { ...destination, cards: destinationCards },
+            ]);
             return;
           }
 
@@ -167,6 +182,7 @@ export function Board({ initial }: { initial: TBoard }) {
               const columns = Array.from(data.columns);
               columns[homeColumnIndex] = updated;
               setData({ ...data, columns });
+              void persistCardOrders([updated]);
               return;
             }
 
@@ -191,6 +207,10 @@ export function Board({ initial }: { initial: TBoard }) {
               cards: destinationCards,
             };
             setData({ ...data, columns });
+            void persistCardOrders([
+              { ...home, cards: homeCards },
+              { ...destination, cards: destinationCards },
+            ]);
             return;
           }
         },
