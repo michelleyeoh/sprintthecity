@@ -107,6 +107,7 @@ export function CardDisplay({
         }
       >
         <div>{card.description}</div>
+        <div className="mt-1 text-sm text-[#6B6C70]">{card.location}</div>
       </div>
       {/* Put a shadow after the item if closer to the bottom edge */}
       {state.type === "is-over" && state.closestEdge === "bottom" ? (
