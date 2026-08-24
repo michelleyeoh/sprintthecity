@@ -31,12 +31,12 @@ jobs:
         run: npx prisma generate
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@38.0.0
+        run: npm install --global vercel@latest
 
       - name: Sync Environment Variables
         run: |
-          vercel env add BASE_URL production --force --token=${{ secrets.VERCEL_TOKEN }}
-          vercel env add DATABASE_URL production --force --token=${{ secrets.VERCEL_TOKEN }}
+          vercel env add BASE_URL production --token=${{ secrets.VERCEL_TOKEN }} <<< "n"
+          vercel env add DATABASE_URL production --token=${{ secrets.VERCEL_TOKEN }} <<< "y"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
