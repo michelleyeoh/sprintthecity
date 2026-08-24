@@ -31,7 +31,7 @@ jobs:
         run: npx prisma generate
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm install --global vercel@38.0.0
 
       - name: Sync Environment Variables
         run: |
